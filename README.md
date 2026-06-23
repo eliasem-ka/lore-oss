@@ -74,6 +74,12 @@ Two things make it different from "AI that writes docs":
 </tr>
 </table>
 
+<p align="center">
+<b>The verdict</b> — every rule needs an explicit human decision: approve, reject (with a required comment), or ask for clarification. Rejections flow back to the agent to refine.
+<br/>
+<img src="docs/screenshots/review-detail.png" alt="Expanded review card showing the product/technical descriptions, source, and approve / reject / needs-clarification actions" width="90%">
+</p>
+
 > Want to see this live? The [Quickstart](#quickstart) below loads exactly this demo data in one command.
 
 ---
