@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+server/public
+**/.env
+.env.*
+!.env.example
+**/coverage
+**/*.log
+.git
+.gitignore
+specs

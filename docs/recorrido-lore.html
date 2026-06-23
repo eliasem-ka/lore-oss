@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lore — Recorrido y guía</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --bg-soft: #161b22;
+    --bg-card: #1b212b;
+    --border: #2a323d;
+    --text: #e6edf3;
+    --muted: #9aa7b4;
+    --accent: #6ea8fe;
+    --accent-soft: #213049;
+    --green: #4ec98f;
+    --amber: #e3b341;
+    --red: #f08c8c;
+    --purple: #b692f0;
+    --radius: 14px;
+    --maxw: 880px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.65;
+    font-size: 17px;
+  }
+
+  /* ── Layout ───────────────────────────────────────────── */
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(14,17,22,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  header.top .wrap {
+    display: flex; align-items: center; gap: 18px;
+    height: 58px; overflow-x: auto;
+  }
+  .brand { font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
+  .brand .dot { color: var(--accent); }
+  nav.top-nav { display: flex; gap: 16px; font-size: 14px; }
+  nav.top-nav a { color: var(--muted); text-decoration: none; white-space: nowrap; }
+  nav.top-nav a:hover { color: var(--text); }
+
+  section { padding: 64px 0 12px; border-top: 1px solid transparent; }
+  section + section { border-top: 1px solid var(--border); }
+
+  h1 { font-size: 40px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -.5px; }
+  h2 { font-size: 27px; margin: 6px 0 8px; letter-spacing: -.3px; }
+  h3 { font-size: 19px; margin: 22px 0 6px; }
+  p { margin: 12px 0; }
+  .lead { font-size: 20px; color: var(--muted); }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 2px; font-size: 12px;
+    color: var(--accent); font-weight: 700; margin-bottom: 10px;
+  }
+  .muted { color: var(--muted); }
+  strong { color: #fff; }
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 6px; color: #cdd9e5;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero { padding-top: 72px; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .badge {
+    font-size: 13px; color: var(--muted);
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 5px 11px; border-radius: 999px;
+  }
+
+  /* ── Cards ────────────────────────────────────────────── */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px; margin: 16px 0;
+  }
+  .grid { display: grid; gap: 16px; }
+  @media (min-width: 640px) { .grid.cols-2 { grid-template-columns: 1fr 1fr; } }
+
+  .card h3 { margin-top: 0; }
+  .card .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--accent-soft); color: var(--accent);
+    font-weight: 700; font-size: 15px; margin-right: 10px;
+  }
+
+  /* ── Loop diagram ─────────────────────────────────────── */
+  .loop {
+    display: grid; gap: 14px; margin: 22px 0;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) { .loop { grid-template-columns: repeat(4, 1fr); } }
+  .loop-step {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; position: relative;
+  }
+  .loop-step .ic { font-size: 26px; }
+  .loop-step .t { font-weight: 700; margin: 6px 0 2px; }
+  .loop-step .d { font-size: 14px; color: var(--muted); }
+  .loop-step::after {
+    content: "→"; position: absolute; color: var(--accent);
+    font-size: 22px; right: -16px; top: 50%; transform: translateY(-50%);
+  }
+  @media (max-width: 719px) {
+    .loop-step::after { content: "↓"; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
+  }
+  .loop-step:last-child::after { content: ""; }
+  .loop-back {
+    text-align: center; color: var(--amber); font-size: 14.5px;
+    border: 1px dashed var(--border); border-radius: 10px; padding: 10px; margin-top: 4px;
+  }
+
+  /* ── Layer stack ──────────────────────────────────────── */
+  .stack { margin: 20px 0; }
+  .layer {
+    border: 1px solid var(--border); border-left: 4px solid var(--accent);
+    background: var(--bg-card); border-radius: 10px;
+    padding: 13px 16px; margin: 9px 0;
+  }
+  .layer .ln { font-weight: 700; }
+  .layer .lk { font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
+  .layer .ld { font-size: 14.5px; color: var(--muted); margin-top: 2px; }
+  .layer.l2 { border-left-color: var(--purple); } .layer.l2 .lk { color: var(--purple); }
+  .layer.l3 { border-left-color: var(--green); }  .layer.l3 .lk { color: var(--green); }
+  .layer.l4 { border-left-color: var(--amber); }  .layer.l4 .lk { color: var(--amber); }
+  .layer.l5 { border-left-color: var(--red); }    .layer.l5 .lk { color: var(--red); }
+  .arrow-down { text-align: center; color: var(--muted); font-size: 18px; line-height: 1; }
+
+  /* ── Status pills ─────────────────────────────────────── */
+  .pill {
+    display: inline-block; font-size: 13px; font-weight: 600;
+    padding: 3px 10px; border-radius: 999px; margin: 3px 4px 3px 0;
+    border: 1px solid var(--border);
+  }
+  .pill.draft  { color: var(--muted); }
+  .pill.pend   { color: var(--accent); border-color: var(--accent-soft); background: var(--accent-soft); }
+  .pill.appr   { color: var(--green); background: #163024; border-color: #1f4733; }
+  .pill.rej    { color: var(--red); background: #34191c; border-color: #4d262a; }
+  .pill.clar   { color: var(--amber); background: #332a15; border-color: #4a3d1d; }
+  .pill.pub    { color: var(--purple); background: #271f3a; border-color: #3a2e54; }
+
+  /* ── Analogy / callout ────────────────────────────────── */
+  .analogy {
+    border-left: 4px solid var(--green); background: #14201a;
+    border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 14px 0;
+  }
+  .analogy .lab { color: var(--green); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  .tech {
+    border-left: 4px solid var(--accent); background: #141c2a;
+    border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 14px 0;
+  }
+  .tech .lab { color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── Details (educational expanders) ──────────────────── */
+  details.qa {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px 20px; margin: 12px 0;
+  }
+  details.qa summary {
+    cursor: pointer; font-weight: 600; font-size: 18px;
+    padding: 14px 0; list-style: none; display: flex; align-items: center; gap: 10px;
+  }
+  details.qa summary::-webkit-details-marker { display: none; }
+  details.qa summary::before {
+    content: "+"; color: var(--accent); font-weight: 700; font-size: 22px;
+    width: 22px; display: inline-block; transition: transform .2s;
+  }
+  details.qa[open] summary::before { content: "−"; }
+  details.qa .body { padding-bottom: 16px; }
+
+  ul.clean { padding-left: 0; list-style: none; margin: 12px 0; }
+  ul.clean li { padding: 6px 0 6px 26px; position: relative; }
+  ul.clean li::before { content: "▹"; color: var(--accent); position: absolute; left: 4px; }
+
+  table.gloss { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 15px; }
+  table.gloss td { border-bottom: 1px solid var(--border); padding: 11px 8px; vertical-align: top; }
+  table.gloss td:first-child { width: 38%; font-weight: 600; color: #fff; }
+  table.gloss td:first-child code { font-size: .82em; }
+
+  footer { padding: 50px 0 70px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  .kicker { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Lore<span class="dot">.</span></div>
+    <nav class="top-nav">
+      <a href="#que-es">Qué es</a>
+      <a href="#loop">El loop</a>
+      <a href="#recorrido">Recorrido</a>
+      <a href="#mcp">¿Qué es un MCP?</a>
+      <a href="#modulos">Los módulos</a>
+      <a href="#conceptos">Conceptos</a>
+      <a href="#embeddings">Embeddings</a>
+      <a href="#agentes">Hecho para agentes</a>
+      <a href="#glosario">Glosario</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══ HERO ══════════════════════════════════════════════ -->
+<section class="hero" id="que-es">
+  <div class="wrap">
+    <div class="eyebrow">Recorrido de producto + guía para entenderlo</div>
+    <h1>Lore: una base de conocimiento <span class="kicker">que se corrige a sí misma</span></h1>
+    <p class="lead">
+      Las reglas de negocio de una empresa viven escondidas dentro del código: condiciones,
+      validaciones, casos especiales que solo conocen quienes lo escribieron. Lore las saca a la luz,
+      las pone en un catálogo legible, y deja que humanos y agentes de IA las mejoren juntos en un ciclo
+      que va <strong>convergiendo</strong> hacia la verdad.
+    </p>
+    <div class="hero-badges">
+      <span class="badge">Node + Express</span>
+      <span class="badge">Postgres + Drizzle</span>
+      <span class="badge">MCP (agentes de IA)</span>
+      <span class="badge">React + Vite</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEMA ══════════════════════════════════════════ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">El problema</div>
+    <h2>El conocimiento de negocio se evapora</h2>
+    <p>
+      Imagina la regla <em>“un cliente VIP no puede aplicar dos cupones en la misma orden”</em>.
+      Esa regla existe… pero solo como un <code>if</code> perdido en un archivo. Cuando la persona que lo
+      escribió se va, el conocimiento se va con ella. La documentación queda vieja. Nadie sabe por qué el
+      sistema hace lo que hace.
+    </p>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>😖 Sin Lore</h3>
+        <p class="muted">El saber del negocio está disperso en miles de líneas de código, en la cabeza de
+        unas pocas personas, y en documentos que nadie actualiza.</p>
+      </div>
+      <div class="card">
+        <h3>✨ Con Lore</h3>
+        <p class="muted">Un catálogo vivo de reglas, cada una explicada en lenguaje de negocio
+        <em>y</em> técnico, revisada por humanos, y mantenida al día por agentes de IA.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EL LOOP ═══════════════════════════════════════════ -->
+<section id="loop">
+  <div class="wrap">
+    <div class="eyebrow">La idea central</div>
+    <h2>El “loop” que da nombre al proyecto</h2>
+    <p>
+      El corazón de Lore es un ciclo de cuatro pasos entre un <strong>agente de IA</strong> y un
+      <strong>revisor humano</strong>. La gracia es que no termina en el paso 4: lo rechazado vuelve al
+      principio mejor informado, y cada vuelta produce reglas más precisas.
+    </p>
+
+    <div class="loop">
+      <div class="loop-step">
+        <div class="ic">🤖</div>
+        <div class="t">1. Extrae</div>
+        <div class="d">El agente lee el código y propone reglas candidatas.</div>
+      </div>
+      <div class="loop-step">
+        <div class="ic">📥</div>
+        <div class="t">2. Propone</div>
+        <div class="d">Las reglas entran al catálogo como <span class="pill pend">pending</span> para revisión.</div>
+      </div>
+      <div class="loop-step">
+        <div class="ic">🧑‍⚖️</div>
+        <div class="t">3. Revisa</div>
+        <div class="d">Un humano aprueba, rechaza o pide aclaración (con comentario).</div>
+      </div>
+      <div class="loop-step">
+        <div class="ic">🔁</div>
+        <div class="t">4. Refina</div>
+        <div class="d">El feedback vuelve al agente, que corrige y reenvía.</div>
+      </div>
+    </div>
+    <div class="loop-back">↻ Lo rechazado no se pierde: alimenta la siguiente vuelta. El ciclo <strong>converge</strong>.</div>
+
+    <div class="analogy">
+      <div class="lab">Analogía</div>
+      Es como un <strong>editor y un escritor</strong>. El escritor (la IA) entrega un borrador; el editor
+      (el humano) marca correcciones; el escritor reescribe. Tras unas rondas, el texto es bueno —
+      pero aquí el “texto” es el conocimiento de negocio de tu empresa.
+    </div>
+  </div>
+</section>
+
+<!-- ══ RECORRIDO DE PRODUCTO ═════════════════════════════ -->
+<section id="recorrido">
+  <div class="wrap">
+    <div class="eyebrow">Recorrido de producto</div>
+    <h2>Qué tenemos hoy, paso a paso</h2>
+
+    <div class="card">
+      <h3><span class="num">1</span>El agente abre una “ronda” y extrae reglas</h3>
+      <p>Un agente de IA se conecta por <a href="#mcp" class="kicker">MCP</a> y empieza una
+      <strong>ronda</strong> (<code>start_round</code>): declara qué parte del sistema va a cubrir, para no
+      pisarse con el trabajo de otro equipo. Luego analiza el código y envía <strong>candidatos</strong>
+      (<code>submit_candidate</code>): cada uno con una descripción de producto, una técnica, de dónde lo
+      sacó (archivo y línea) y su nivel de confianza.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">2</span>Las reglas caen en una cola de revisión</h3>
+      <p>En la web, un revisor ve la cola de reglas <span class="pill pend">pending</span>. Para cada una
+      puede:</p>
+      <ul class="clean">
+        <li><span class="pill appr">approved</span> la regla es correcta y entra al catálogo oficial.</li>
+        <li><span class="pill rej">rejected</span> no sirve — <strong>obliga a dejar un comentario</strong> explicando por qué.</li>
+        <li><span class="pill clar">needs_clarification</span> falta info — también pide comentario.</li>
+      </ul>
+      <p class="muted">Regla de oro del producto: <strong>solo un humano aprueba</strong>. La IA nunca
+      “se aprueba a sí misma”.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">3</span>El feedback vuelve al agente</h3>
+      <p>El agente pregunta “¿qué quedó pendiente?” (<code>list_pending_feedback</code>), lee los comentarios
+      del revisor, vuelve a mirar el código y envía una versión corregida
+      (<code>submit_refinement</code>). No se crea una regla duplicada: se guarda una <strong>nueva
+      versión</strong> de la misma, así queda el historial completo.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="num">4</span>El catálogo se vuelve la fuente de verdad</h3>
+      <p>Las reglas aprobadas se pueden <strong>buscar</strong> (incluso en otro idioma — la búsqueda es
+      multilingüe), exportar, y consultar tanto por personas como por otros agentes. Lore también guarda
+      <strong>arquitectura</strong> (cómo está construido el sistema: features, capas, diagramas), no solo
+      reglas de negocio.</p>
+    </div>
+
+    <h3>Dos tipos de conocimiento</h3>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>📘 Regla de negocio</h3>
+        <p class="muted">“¿Qué debe pasar?” — condiciones, límites, casos especiales. Siempre pasan por
+        revisión humana.</p>
+      </div>
+      <div class="card">
+        <h3>🏗️ Arquitectura</h3>
+        <p class="muted">“¿Cómo está hecho?” — módulos, capas, dependencias. Si la confianza es muy alta,
+        puede auto-<span class="pill pub">published</span> (visible, pero <em>publicado ≠ aprobado</em>:
+        publicar lo hace la máquina, aprobar solo un humano).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ¿QUÉ ES UN MCP? ═══════════════════════════════════ -->
+<section id="mcp">
+  <div class="wrap">
+    <div class="eyebrow">Concepto clave · para no-técnicos</div>
+    <h2>¿Qué es un MCP y por qué importa?</h2>
+    <p>
+      <strong>MCP</strong> significa <em>Model Context Protocol</em> (“protocolo de contexto para modelos”).
+      Es un <strong>estándar para que un modelo de IA use herramientas externas</strong> de forma ordenada.
+    </p>
+
+    <div class="analogy">
+      <div class="lab">Analogía</div>
+      Piensa en el MCP como el <strong>puerto USB de la inteligencia artificial</strong>. Antes, cada
+      aparato necesitaba su propio cable raro. El USB puso un enchufe común: conectas cualquier cosa y
+      funciona. El MCP hace lo mismo para la IA: le da un “enchufe” estándar para conectarse a
+      herramientas — como nuestro Lore — sin inventar un cable nuevo cada vez.
+    </div>
+
+    <h3>¿Qué gana la IA al conectarse a Lore por MCP?</h3>
+    <p>Lore expone un conjunto de <strong>herramientas</strong> que la IA puede “llamar” como si fueran
+    botones. Por ejemplo:</p>
+    <ul class="clean">
+      <li><code>start_round</code> — “voy a empezar a documentar esta parte”.</li>
+      <li><code>search_catalog</code> — “¿qué reglas ya existen aquí?” (para no duplicar).</li>
+      <li><code>submit_candidate</code> — “encontré esta regla, la propongo”.</li>
+      <li><code>list_pending_feedback</code> / <code>submit_refinement</code> — “¿qué me rechazaron? la corrijo”.</li>
+    </ul>
+
+    <div class="tech">
+      <div class="lab">Un poco más técnico</div>
+      Lo interesante es <strong>dónde corre la IA</strong>: el agente (por ejemplo Claude) vive fuera de
+      Lore. Lore solo es un <strong>servidor</strong> que ofrece herramientas por HTTP siguiendo el
+      protocolo MCP. El agente decide <em>cuándo</em> y <em>cómo</em> usarlas. Así, el “cerebro” (el modelo)
+      y las “manos” (las herramientas de Lore) están desacoplados — puedes cambiar de modelo sin tocar Lore,
+      y mejorar Lore sin reentrenar el modelo.
+    </div>
+
+    <p class="muted">Dato curioso: Lore atiende a <strong>dos públicos con el mismo código</strong>: las
+    personas usan una API web normal (REST), y los agentes usan MCP. Más abajo verás cómo se generan
+    <em>ambas</em> a partir de una sola definición.</p>
+  </div>
+</section>
+
+<!-- ══ LOS MÓDULOS / CAPAS ═══════════════════════════════ -->
+<section id="modulos">
+  <div class="wrap">
+    <div class="eyebrow">Cómo está organizado por dentro</div>
+    <h2>Los módulos: una arquitectura “por capas”</h2>
+    <p>
+      Lore está dividido en <strong>capas</strong>, y cada capa solo conoce a la de abajo. Esto suena
+      abstracto, así que vamos con una analogía.
+    </p>
+
+    <div class="analogy">
+      <div class="lab">Analogía</div>
+      Piensa en un <strong>restaurante</strong>. El <strong>mesero</strong> habla con el cliente pero no
+      cocina. La <strong>cocina</strong> prepara los platos pero no atiende mesas. La <strong>despensa</strong>
+      guarda ingredientes pero no decide el menú. Cada uno hace <em>una</em> cosa y confía en el siguiente.
+      Si cambias el menú impreso, la cocina ni se entera. Esa separación es exactamente lo que hacen las capas.
+    </div>
+
+    <p>De arriba (lo que se ve) hacia abajo (lo que guarda los datos):</p>
+
+    <div class="stack">
+      <div class="layer l1">
+        <span class="lk">transport/</span> · <span class="ln">El mesero</span>
+        <div class="ld">Recibe las peticiones de afuera. Hay dos “meseros”: uno para personas (REST) y otro
+        para agentes (MCP). No tienen reglas propias: solo traducen y pasan el pedido hacia adentro.</div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="layer l2">
+        <span class="lk">app/ (registro de capacidades)</span> · <span class="ln">El menú</span>
+        <div class="ld">Cada acción que Lore sabe hacer se declara <em>una sola vez</em> aquí. De esa
+        declaración se generan automáticamente <strong>los dos meseros</strong> (REST y MCP). Un solo menú,
+        dos formas de pedir.</div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="layer l3">
+        <span class="lk">services/</span> · <span class="ln">El chef</span>
+        <div class="ld">Aquí vive la lógica de verdad: cómo se fusiona una regla repetida, cómo se detecta
+        que dos equipos chocan, cómo se busca. Orquesta los ingredientes para armar el plato.</div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="layer l4">
+        <span class="lk">domain/</span> · <span class="ln">El libro de recetas</span>
+        <div class="ld">Las reglas puras e inmutables: qué estados puede tener una regla, qué puede hacer
+        cada rol, cómo se comporta cada tipo de conocimiento. No toca la base de datos; es pura lógica.</div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="layer l5">
+        <span class="lk">repos/ + db/</span> · <span class="ln">La despensa</span>
+        <div class="ld">Lo único que sabe hablar con la base de datos (Postgres). Guarda y trae filas. No
+        decide nada de negocio: solo almacena.</div>
+      </div>
+    </div>
+
+    <div class="tech">
+      <div class="lab">¿Por qué molestarse en separar tanto?</div>
+      Porque cada pieza se puede <strong>entender, probar y cambiar sola</strong>. Si mañana cambias Postgres
+      por otra base de datos, solo tocas la “despensa”. Si agregas una regla de negocio nueva, vive en el
+      “libro de recetas” y nadie más se entera. Menos enredos = menos errores.
+    </div>
+
+    <p class="muted">Hay una capa más, <code>infra/</code> (los “avisos automáticos”), que verás en el
+    siguiente apartado con el <em>event bus</em>.</p>
+  </div>
+</section>
+
+<!-- ══ CONCEPTOS INTERESANTES ════════════════════════════ -->
+<section id="conceptos">
+  <div class="wrap">
+    <div class="eyebrow">Para los curiosos · clic para expandir</div>
+    <h2>Conceptos técnicos interesantes (en simple)</h2>
+    <p class="muted">Cada uno tiene una analogía primero y el detalle técnico después. Abre los que te llamen.</p>
+
+    <details class="qa">
+      <summary>La máquina de estados: por qué una regla no puede “saltarse pasos”</summary>
+      <div class="body">
+        <p>Una regla pasa por estados:
+          <span class="pill draft">draft</span>
+          <span class="pill pend">pending</span> →
+          <span class="pill appr">approved</span> /
+          <span class="pill rej">rejected</span> /
+          <span class="pill clar">needs_clarification</span>.
+        </p>
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como los <strong>semáforos de un trámite</strong>: no puedes pasar de “solicitado” a “entregado”
+          sin pasar por “en revisión”. Hay un mapa fijo de transiciones permitidas.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Es una <strong>FSM</strong> (máquina de estados finita): una tabla que dice qué transiciones son
+          legales. Vive en <code>domain/fsm.ts</code> y está cubierta por tests. Como el mapa es un dato (una
+          tabla), no <code>if</code>s dispersos, es imposible que un revisor o un agente fuercen un salto
+          inválido. La integridad del ciclo está garantizada en un solo lugar.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Un solo “menú”, dos APIs: el registro de capacidades</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Imagina escribir una receta <strong>una vez</strong> y que de ahí salgan solos el menú en español
+          y el menú en inglés, siempre sincronizados. Si cambias la receta, ambos menús cambian juntos.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Cada acción se declara una vez con <code>defineCapability</code>. De esa lista se
+          <strong>generan</strong> tanto las rutas REST (para personas) como las herramientas MCP (para
+          agentes). Nadie escribe las rutas a mano. Y hay un test de <strong>paridad</strong> que falla si
+          una acción existe en un canal pero no en el otro — así personas y agentes nunca quedan desfasados.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>El “event bus”: avisos automáticos sin ensuciar la lógica</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como una <strong>campana en la cocina</strong>: cuando un plato está listo, suena, y quien quiera
+          reacciona (el mesero lo lleva, el de caja lo anota). El chef no tiene que acordarse de avisarle a
+          cada uno: solo toca la campana.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Cuando algo importante ocurre (una regla cambió de estado, se publicó, llegó un veredicto), se
+          <strong>emite un evento</strong>. Suscriptores independientes reaccionan: uno manda un
+          <em>webhook</em>, otro comenta en <strong>Jira</strong>, otro deja un registro de auditoría.
+          La clave: estos avisos <strong>no cambian el resultado</strong> de la acción y se agregan sin tocar
+          la lógica principal. Quieres una integración nueva (Slack, email)? Agregas un suscriptor y ya.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Roles y permisos: quién puede aprobar qué</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como en una empresa: un <strong>analista</strong> puede revisar, pero ciertas decisiones
+          importantes requieren la firma de un <strong>gerente</strong>.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Hay una jerarquía: <code>reviewer &lt; senior &lt; admin</code>. Para ciertos flujos sensibles se
+          puede exigir un <strong>rol mínimo para aprobar</strong> (p. ej. “aprobar reglas de pago requiere
+          senior”). Si no tienes el rango, el sistema responde “prohibido” (403). Rechazar o pedir aclaración
+          no está restringido — devolver algo para mejorarlo no añade riesgo. Y la identidad sale de un
+          <strong>token</strong> firmado, nunca de lo que el usuario diga de sí mismo.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Multi-tenant: varios espacios de trabajo aislados (lo último que construimos)</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como un <strong>edificio de oficinas</strong>: cada empresa tiene su piso con su propia llave.
+          Aunque comparten el edificio, nadie del piso 3 puede entrar al piso 5 ni ver sus papeles.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Cada catálogo pertenece a un <strong>workspace</strong> (espacio de trabajo). Toda consulta lleva
+          “de qué piso eres” (<code>workspace_id</code>) y <strong>jamás</strong> devuelve datos de otro. Si
+          pides una regla de otro workspace, el sistema responde “no existe” — ni siquiera revela que está
+          ahí. Esta es la parte más delicada: un solo hueco sería una fuga de datos entre clientes, así que
+          se probó con un test dedicado que intenta cruzar la frontera y verifica que es imposible.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Búsqueda híbrida: encontrar una regla aunque la escribas distinto</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Buscar por <strong>palabra exacta</strong> es como un índice al final de un libro. Buscar por
+          <strong>significado</strong> es como preguntarle a un bibliotecario que entiende lo que <em>quieres
+          decir</em>, aunque uses otras palabras. Lore usa las dos a la vez.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Combina búsqueda <strong>léxica</strong> (coincidencia de texto) con búsqueda <strong>semántica</strong>
+          por <em>embeddings</em> (vectores que capturan el significado), y <strong>fusiona</strong> ambos
+          resultados. Por eso puedes buscar en español una regla escrita en inglés y aun así encontrarla:
+          el significado viaja entre idiomas.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>Versiones, no duplicados: el historial nunca se pierde</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como el <strong>historial de un documento</strong>: cada edición guarda una versión, no crea un
+          archivo nuevo llamado “documento_final_v2_ahora_sí”.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Cada regla tiene una <strong>clave</strong> semántica (<code>unit_key</code>). Reenviar la misma
+          clave crea una <strong>versión nueva</strong>, no una fila duplicada. Si dos hallazgos apuntan al
+          mismo trozo de código, salta un aviso de solapamiento (no bloquea, solo advierte). Así el catálogo
+          se mantiene limpio y con memoria completa.
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ══ EMBEDDINGS A FONDO ════════════════════════════════ -->
+<section id="embeddings">
+  <div class="wrap">
+    <div class="eyebrow">Profundización · cómo busca Lore de verdad</div>
+    <h2>Embeddings: darle “coordenadas” al significado</h2>
+    <p>
+      Esta es probablemente la pieza de IA más interesante <em>dentro</em> de Lore (separada del agente que
+      se conecta por fuera). Vale la pena entenderla bien.
+    </p>
+
+    <div class="analogy">
+      <div class="lab">Analogía</div>
+      Imagina un <strong>mapa gigante del significado</strong>. Cada frase se convierte en un punto con
+      coordenadas. Frases que <em>quieren decir lo mismo</em> caen cerca, aunque usen palabras distintas o
+      estén en otro idioma. “Un cliente VIP no puede apilar cupones” y “VIP customers can’t stack two
+      coupons on one order” quedan casi en el mismo punto. <strong>Eso es un embedding</strong>: convertir texto en
+      coordenadas de significado.
+    </div>
+
+    <div class="tech">
+      <div class="lab">Los números reales (de nuestro código)</div>
+      <ul class="clean">
+        <li>El modelo es <code>multilingual-e5-small</code>: convierte cualquier texto en un vector de
+          <strong>384 dimensiones</strong> (384 números). No son 2 coordenadas como en un mapa: son 384 ejes
+          de “significado”.</li>
+        <li>Es <strong>multilingüe por diseño</strong> (“cross-lingual”): el español y el inglés caen en el
+          mismo mapa, por eso una búsqueda en español encuentra una regla escrita en inglés.</li>
+        <li>Corre <strong>local, dentro del servidor</strong> (vía <code>@huggingface/transformers</code>) —
+          <strong>no llama a ninguna API externa</strong>. Tus reglas no salen a un tercero para ser
+          “vectorizadas”.</li>
+      </ul>
+    </div>
+
+    <h3>El detalle elegante: “query:” vs “passage:”</h3>
+    <p>
+      El modelo E5 fue entrenado para distinguir <strong>una pregunta corta</strong> de <strong>un documento
+      guardado</strong>. Por eso, antes de vectorizar, Lore le pone un prefijo:
+    </p>
+    <ul class="clean">
+      <li><code>passage:</code> cuando <strong>guarda</strong> una regla en el catálogo.</li>
+      <li><code>query:</code> cuando alguien <strong>busca</strong>.</li>
+    </ul>
+    <p class="muted">
+      Es como decirle al modelo “esto es una ficha de archivo” vs. “esto es una pregunta de mostrador”. Con
+      ese pequeño aviso, los emparejamientos mejoran notablemente. Internamente además se hace
+      <em>mean-pooling</em> y se <em>normaliza</em> el vector, para poder comparar por
+      <strong>distancia coseno</strong> (qué tan alineadas apuntan dos “flechas” de significado).
+    </p>
+
+    <h3>Búsqueda híbrida: dos buscadores que se complementan</h3>
+    <p>Una sola técnica no basta, así que Lore corre <strong>dos</strong> y mezcla resultados:</p>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>🧲 DENSE (semántico)</h3>
+        <p class="muted">Por embeddings y distancia coseno. Entiende el <em>significado</em> y cruza idiomas.
+        Brilla cuando buscas una idea con otras palabras.</p>
+      </div>
+      <div class="card">
+        <h3>🔤 SPARSE (léxico)</h3>
+        <p class="muted">Búsqueda de texto de Postgres en modo <code>simple</code> (sin “stemming”).
+        A propósito: así <strong>no destroza identificadores de código</strong> como <code>SKU4471</code> o
+        <code>getCartTotalForCustomer</code>, que el modo semántico difumina.</p>
+      </div>
+    </div>
+
+    <div class="tech">
+      <div class="lab">Cómo se fusionan: Reciprocal Rank Fusion (RRF)</div>
+      <p>Cada buscador entrega su lista ordenada. El problema: sus “puntajes” no son comparables entre sí.
+      La solución es ignorar los puntajes y mirar solo el <strong>puesto</strong> (rank) de cada resultado:</p>
+      <p style="text-align:center; font-family:var(--mono); font-size:15px; color:#cdd9e5;">
+        puntaje(regla) = Σ &nbsp; 1 / (60 + puesto)
+      </p>
+      <p>Una regla que sale 1ª en un buscador suma <code>1/61</code>; si también sale 3ª en el otro, suma
+      <code>1/63</code> más. Se ordenan por la suma. Ese <strong>60</strong> (constante estándar de RRF)
+      suaviza el peso de los primeros puestos para que las dos listas se mezclen sin que una aplaste a la
+      otra. Aparecer bien rankeado en <em>ambos</em> buscadores es lo que sube una regla a la cima.</p>
+    </div>
+
+    <div class="analogy">
+      <div class="lab">Por qué los dos juntos</div>
+      El semántico es el <strong>bibliotecario que entiende lo que quieres decir</strong>; el léxico es el
+      <strong>índice exacto del final del libro</strong>. Uno encuentra ideas, el otro encuentra códigos
+      literales. Sus errores son opuestos, así que combinados tapan los huecos del otro.
+    </div>
+
+    <h3>A prueba de fallos (y rápido)</h3>
+    <ul class="clean">
+      <li><strong>Degrada con gracia:</strong> si el modelo no carga o se desactiva, el embedding devuelve
+        “nada” y la búsqueda <strong>cae automáticamente a solo léxico</strong>. Nunca se rompe; solo pierde
+        la parte semántica.</li>
+      <li><strong>Warm-up al arrancar:</strong> el modelo se “precalienta” al iniciar el servidor para que la
+        primera búsqueda real no pague los ~2–5 segundos de carga en frío.</li>
+      <li><strong>Los vectores nunca cruzan la red:</strong> ni los agentes ni la web envían o reciben
+        vectores. Mandan <strong>texto</strong>; Lore vectoriza puertas adentro. La interfaz se mantiene
+        simple y “agnóstica de herramienta”.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ HECHO PARA AGENTES ════════════════════════════════ -->
+<section id="agentes">
+  <div class="wrap">
+    <div class="eyebrow">Profundización · lo que solo sirve a la IA</div>
+    <h2>Transformaciones pensadas para agentes de IA</h2>
+    <p>
+      Aquí está lo que pediste: cosas que existen <strong>específicamente porque del otro lado hay un
+      agente</strong> y no una persona. La misma acción se “sirve” distinto según quién pregunte.
+    </p>
+
+    <details class="qa" open>
+      <summary>1 · La misma respuesta, pero como “consejo” en vez de datos crudos</summary>
+      <div class="body">
+        <p>Cuando una <strong>persona</strong> usa la web, recibe JSON que la interfaz pinta bonito. Cuando
+        un <strong>agente</strong> envía una regla por MCP, Lore no le devuelve JSON: le devuelve un
+        <strong>mensaje guía</strong> que orienta su siguiente paso. El texto real que recibe el agente al
+        llamar <code>submit_candidate</code> se ve así:</p>
+        <div class="tech" style="font-family:var(--mono); font-size:13.5px; white-space:pre-wrap; line-height:1.5;">✓ Created new rule "Cupón requiere carrito > $20…" → v1
+  rule_id: a1b2…
+
+⚠ Source overlap warnings (1):
+  - "Restricción de monto de cupón" (c3d4…) ya referencia: CheckoutService.ts:88
+  Consider: ¿es la misma regla? Si sí, pasa su rule_key para versionar en vez de duplicar.
+
+📚 Reglas ya aprobadas en el flujo "Checkout" (3):
+  - "Ventana de checkout" [checkout:window]
+  Revisa estas para no proponer algo ya cubierto.</div>
+        <p class="muted">Fíjate: le está <strong>diciendo al agente qué hacer después</strong> (“pasa el
+        rule_key”, “revisa estas para no duplicar”). Es coaching, no solo datos. Esa función de “render” se
+        define por capacidad, y es lo único que difiere entre el canal humano y el canal agente.</p>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>2 · Los “prompts” MCP: una metodología completa inyectada en el agente</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Es como entregarle a un consultor nuevo un <strong>manual de procedimiento</strong> el primer día,
+          en vez de soltarlo sin contexto. Mismo consultor, resultados mucho mejores.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Además de herramientas, Lore expone <strong>prompts</strong> por MCP (<code>extract_rules</code>,
+          <code>extract_architecture</code>). No son datos: son <strong>instrucciones de cómo trabajar</strong>
+          que el agente recibe, por ejemplo:
+          <ul class="clean">
+            <li>“Primero <strong>carga el contexto</strong>: mira las entidades y busca en el catálogo
+              <em>antes</em> de proponer, para no duplicar.”</li>
+            <li>“<strong>No filtres por confianza</strong> — envía todo y marca lo dudoso con
+              <code>open_questions</code> en vez de descartarlo.”</li>
+            <li>“Declara tu <code>scope</code> al abrir la ronda para no chocar con otro equipo.”</li>
+          </ul>
+          Convierte “acceso crudo a herramientas” en “comportamiento de experto guiado”. Puro beneficio para
+          el agente.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>3 · Idioma canónico inglés + búsqueda multilingüe (un combo deliberado)</summary>
+      <div class="body">
+        <p>A los agentes se les instruye escribir <strong>siempre el contenido en inglés</strong>, sin
+        importar el idioma del código o del usuario. ¿Por qué, si los usuarios hablan español?</p>
+        <div class="tech">
+          <div class="lab">La jugada</div>
+          Porque el <strong>almacenamiento</strong> queda uniforme (un solo idioma canónico → catálogo
+          consistente para onboarding), mientras que la <strong>búsqueda</strong> es multilingüe gracias a
+          los embeddings. Resultado: escribes y guardas en inglés, pero buscas en español y lo encuentras
+          igual. La instrucción al agente y la tecnología de embeddings están diseñadas <em>para encajar
+          una con la otra</em>. Los identificadores de código (nombres de clases, enums, códigos como
+          <code>SKU4471</code>) se copian <strong>tal cual</strong>; solo la prosa va en inglés.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>4 · El texto que “representa” cada regla para buscarla (search_text)</summary>
+      <div class="body">
+        <div class="analogy">
+          <div class="lab">Analogía</div>
+          Como la <strong>contraportada de un libro</strong>: un resumen pensado para que te encuentren, no
+          la obra completa.
+        </div>
+        <div class="tech">
+          <div class="lab">Técnico</div>
+          Cada tipo de conocimiento decide <strong>qué de sí mismo</strong> se proyecta a un único bloque de
+          texto para indexar y vectorizar:
+          <ul class="clean">
+            <li><strong>Regla de negocio</strong> → título + descripción de producto + descripción técnica.</li>
+            <li><strong>Arquitectura</strong> → título + resumen + el <em>stack</em> (endpoints, librerías,
+              persistencia) + patrones.</li>
+          </ul>
+          Así el buscador no adivina: cada tipo dice explícitamente con qué quiere ser encontrado. Es una
+          transformación interna que hace mejor la recuperación tanto para humanos como para agentes.
+        </div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary>5 · El veredicto previo vuelve a influir (cerrar el loop de verdad)</summary>
+      <div class="body">
+        <p>Cuando un agente reenvía una unidad de <strong>arquitectura</strong>, Lore recupera el
+        <strong>feedback humano anterior</strong> y lo tiene en cuenta para decidir el estado inicial.</p>
+        <div class="tech">
+          <div class="lab">Por qué importa</div>
+          Normalmente una unidad de arquitectura con confianza alta se auto-publica. Pero si <em>ya</em> pasó
+          por manos de un humano antes, <strong>no</strong> se vuelve a auto-publicar a la ligera: regresa a
+          revisión. Es el “loop” funcionando en serio — la decisión pasada del humano <strong>pesa</strong>
+          sobre el comportamiento futuro del agente, en vez de ignorarse en cada reenvío.
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ══ GLOSARIO ══════════════════════════════════════════ -->
+<section id="glosario">
+  <div class="wrap">
+    <div class="eyebrow">Glosario rápido</div>
+    <h2>Si te perdiste con una palabra</h2>
+    <table class="gloss">
+      <tr><td>Agente (de IA)</td><td>Un modelo (como Claude) que actúa por su cuenta: lee, decide y usa herramientas. Aquí, extrae reglas del código.</td></tr>
+      <tr><td>MCP <span class="muted">(Model Context Protocol)</span></td><td>El “enchufe USB” estándar que permite a un agente usar las herramientas de Lore.</td></tr>
+      <tr><td>Regla de negocio</td><td>Una condición del negocio escondida en el código, ahora explicada en lenguaje claro.</td></tr>
+      <tr><td>Ronda <span class="muted">(round)</span></td><td>Una sesión de trabajo del agente sobre una parte del sistema, para coordinar y no duplicar esfuerzo.</td></tr>
+      <tr><td>Veredicto</td><td>La decisión del revisor: aprobar, rechazar o pedir aclaración.</td></tr>
+      <tr><td>Capa / módulo</td><td>Una sección del código con una sola responsabilidad (mesero, cocina, despensa…).</td></tr>
+      <tr><td>FSM <span class="muted">(máquina de estados)</span></td><td>El mapa fijo de en qué estado puede estar una regla y a cuál puede pasar.</td></tr>
+      <tr><td>Event bus</td><td>La “campana” que avisa cuando algo pasa, para que otras piezas reaccionen sin acoplarse.</td></tr>
+      <tr><td>Workspace</td><td>Un espacio de trabajo aislado: cada cliente ve solo lo suyo.</td></tr>
+      <tr><td>Embedding</td><td>Representar el <em>significado</em> de un texto como un vector de números (aquí, 384), para buscar por idea y no solo por palabra. Modelo: <code>multilingual-e5-small</code>, local.</td></tr>
+      <tr><td>DENSE vs SPARSE</td><td>Los dos buscadores de Lore: <em>dense</em> = semántico (embeddings); <em>sparse</em> = léxico (texto exacto, bueno para código). Se combinan.</td></tr>
+      <tr><td>RRF <span class="muted">(Reciprocal Rank Fusion)</span></td><td>La fórmula que mezcla las dos listas de resultados usando el <em>puesto</em> de cada uno, no su puntaje.</td></tr>
+      <tr><td>Distancia coseno</td><td>Cómo se mide “qué tan parecidos” son dos significados: qué tan alineadas apuntan sus flechas en el mapa de 384 ejes.</td></tr>
+      <tr><td>Prompt (MCP)</td><td>Una metodología/instrucción que Lore le entrega al agente (cómo extraer reglas), no un dato. Guía su forma de trabajar.</td></tr>
+      <tr><td>render</td><td>Cómo se “sirve” la respuesta: JSON para la web (personas), texto-consejo para los agentes (MCP).</td></tr>
+      <tr><td>REST</td><td>La forma “clásica” en que una web pide datos a un servidor (la usan las personas).</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Lore — base de conocimiento de reglas de negocio · documento de recorrido y aprendizaje.<br />
+    Hecho para entenderse sin ser experto. 🧭
+  </div>
+</footer>
+
+</body>
+</html>
