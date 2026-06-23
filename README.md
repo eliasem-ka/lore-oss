@@ -33,6 +33,7 @@ and other agents can trust.
 ## Table of contents
 
 - [Why Lore](#why-lore)
+- [Screenshots](#screenshots)
 - [Quickstart](#quickstart)
 - [Connect an MCP client](#connect-an-mcp-client)
 - [Architecture](#architecture)
@@ -58,6 +59,25 @@ Two things make it different from "AI that writes docs":
 
 ---
 
+## Screenshots
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<b>Catalog</b> — approved rules, grouped by flow, with confidence and entity links.
+<img src="docs/screenshots/catalog.png" alt="Catalog of approved business rules grouped by flow">
+</td>
+<td width="50%" valign="top">
+<b>Review queue</b> — rules awaiting a human verdict: approve, reject, or ask for clarification.
+<img src="docs/screenshots/review-queue.png" alt="Review queue of rules awaiting a human verdict">
+</td>
+</tr>
+</table>
+
+> Want to see this live? The [Quickstart](#quickstart) below loads exactly this demo data in one command.
+
+---
+
 ## Quickstart
 
 **Prerequisites:** Node 20+, Docker (for Postgres).
@@ -80,6 +100,21 @@ npm run dev                        # Vite on http://localhost:5173
 ```
 
 Open **http://localhost:5173** — the UI proxies `/api` and `/mcp` to port 3000.
+
+### Load the demo data (optional)
+
+To populate the e-commerce catalog shown in the [screenshots](#screenshots) above:
+
+```bash
+cd server
+npm run seed:demo
+```
+
+Then log in at **http://localhost:5173** with:
+
+| Email | Password |
+|---|---|
+| `demo@acme.test` | `demodemo123` |
 
 ---
 

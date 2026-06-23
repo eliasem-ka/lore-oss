@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Demo seed script (`npm run seed:demo`) that populates an e-commerce workspace, plus
+  catalog / review-queue screenshots in the README.
+
 ## [0.1.0] — 2026-06-23
 
 Initial public release.

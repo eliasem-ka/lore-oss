@@ -14,7 +14,8 @@
     "flow:policy": "tsx src/scripts/set-flow-policy.ts",
     "workspace:create": "tsx src/scripts/create-workspace.ts",
     "workspace:add-user": "tsx src/scripts/add-workspace-member.ts",
-    "test": "EMBEDDING_PROVIDER=none vitest run"
+    "test": "EMBEDDING_PROVIDER=none vitest run",
+    "seed:demo": "tsx src/scripts/seed-demo.ts"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",
